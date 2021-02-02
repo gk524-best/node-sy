@@ -84,3 +84,68 @@ ee1.emit('something');
 
 // EventEmitter 类
 
+// EventEmitter 实例在新的监听器被添加到其内部监听器数组之前，会触发自身的'newListener'事件
+const myEmitter7 = new MyEmitter();
+// 只处理一次 避免无线循环
+myEmitter7.once('newListener', (event, listener) => {
+  if (event === 'event') {
+    myEmitter7.on('event', () => {
+      console.log('B');
+    })
+  }
+})
+
+function listenerA() {
+  console.log('A');
+}
+
+myEmitter7.on('event', () => {
+  console.log('A');
+});
+myEmitter7.removeListener('event', listenerA)
+myEmitter7.emit('event');
+
+// 默认情况每个事件可以注册最多10监听器
+// 1. emitter.setMaxListeners(n) 改变单个EventEmitter 实例的限制
+// 2. EventEmitter.defaultMaxListeners(n) 改变所有EventEmitter实例的默认值
+myEmitter7.setMaxListeners(myEmitter7.getMaxListeners() + 1);
+
+// emitter.addListener(eventName, listener) 等价于 emitter.on(eventName, listener)
+myEmitter7.addListener('test', () => {
+  console.log('测试-----addListener');
+})
+myEmitter7.emit('test');
+
+
+// emitter.emit(eventName[,...args])
+// 按照监听器注册的顺序，同步地调用每个注册到名为eventName的事件的监听器，并传入提供的参数
+// 如果事件有监听器，则返回true，否则返回false
+const myEmitter8 = new EventEmitter();
+myEmitter8.on('event', function fistListener() {
+  console.log('第一个监听器');
+})
+myEmitter8.on('event', function secondListener(arg1, arg2) {
+
+  console.log(`第二个监听器中的事件有参数 ${arg1}、${arg2}`);
+})
+myEmitter8.on('event', function thirdListener(...args) {
+  const parameters = args.join(', ');
+  console.log(`第三个监听器中的事件有参数 ${parameters}`);
+})
+console.log(myEmitter8.listeners('event'));
+
+myEmitter8.emit('event', 1, 2, 3, 4);
+console.log(myEmitter8.listenerCount('event'))
+
+
+// emitter.eventNames()
+// 返回已注册监听器的事件名的数组。数组中的值为字符串或Symbol
+const myEmitter9 = new EventEmitter();
+myEmitter9.on('one', () => { });
+myEmitter9.on('two', () => { });
+
+const symbol = Symbol('symbol');
+myEmitter9.on(symbol, () => { });
+console.log('---------emitter.eventNames()--------');
+console.log(myEmitter9.eventNames());
+
