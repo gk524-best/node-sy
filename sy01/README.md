@@ -24,6 +24,15 @@ Buffer库为Node.j带来了一种存储原始数据的方法，可以让Node.js�
     Node.js 单线程类似进入一个while(true)的事件循环，直到没有事件观察者退出，每个异步事件
 都生成一个事件观察者，如果有事件发生就调用该回调函数。
 
+事件循环的6个阶段：
+1.timers阶段：这个阶段执行setTimeout和setInterval预定的callback
+2.I/O callback阶段：执行除了close事件的callbacks、被timers设定的callbacks、setImmediate()
+设定的callbacks这些之外的callbacks
+3.idle,prepare阶段：仅node内部使用
+4.poll阶段：获取新的I/O事件，适当的条件下node将阻塞在这里
+5.check阶段：执行setImmediate()设定的callbacks
+6.close callbacks阶段：执行soket.on('close', ...)这些callbacks
+
 ## 事件驱动程序
   Node.js使用事件驱动模型，当web server接收到请求，就把它关闭然后进行处理，然后去服务下一个
 web请求。当这个请求完成，它被放回到处理队列，当到达队列开头，这个结果被返回给用户。这个模型
