@@ -108,3 +108,53 @@ stat('.').then((stats) => {
   // 错误处理
 })
 
+
+// TextEncoder的所有实例仅支持UTF-8编码
+/**
+ * textEncoder.encode([input])
+ * UTF-8对输入字符串进行编码，并返回包含编码字节的Uint8Array
+ * @param input <string> 要编码的文本 默认空字符串
+ * @return <Uint8Array>
+ */
+const encoder1 = new TextEncoder();
+encoder1.encode('hhh')
+
+
+/**
+ * textEncoder.encoderInto(src, dest)
+ * 编码保存在一个数组中
+ * @param src <string> 要编码的文本
+ * @param dest <Uint8Array> 编码保存的数组
+ * @retruns <Object>
+ *    read  <number> 读取src的Unicode代码单元
+ *    written <number> 写入的UTF-8字节
+ */
+const encoder2 = new TextEncoder();
+const src = 'this is a some data';
+const dest = new Uint8Array(10);
+const { read, written } = encoder2.encodeInto(src, dest);
+console.log(read, written);
+
+/**
+ * textEncoder.encoding
+ * TextEncoder实例支持的编码。始终设置为“ utf-8
+ */
+const encoder3 = new TextEncoder();
+console.log(encoder3.encoding);
+
+
+/**
+ * TextDecoder 
+ * 用法同TextEncoder,用来对使用TextEncode对象编码的字符串做解码处理
+ */
+const decoder = new TextEncoder('shift_jis');
+let string = '';
+let buffer;
+while (buffer = getNextChunkSomehow()) {
+  string += decoder.decode(buffer, { stream: true })
+}
+string += decoder.decode();
+
+
+
+// util.types 为不同类型的内置对象提供类型检查
